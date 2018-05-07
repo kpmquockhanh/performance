@@ -65,27 +65,25 @@ Có  nhiều các biến khác của InnoDB cần được điều chỉnh:
 
 _innodb_autoinc_lock_mode_
 
-
-Setting [innodb_autoinc_lock_mode][8] =2 (interleaved mode) can remove the need for table-level AUTO-INC lock (and can increase performance when multi-row insert statements are used to insert values into tables with auto_increment primary key). This requires binlog_format=ROW  or MIXED  (and ROW is the default in MySQL 5.7).
+Thiết lập [innodb_autoinc_lock_mode][8] =2 (chế độ xen kẽ) có thể nhu cầu cho khóa AUTO-INC cấp bảng (và có thể tăng hiệu suất khi nhiều dòng lệnh insert được sử dụng để ghi giá trị vào các bảng với các khóa chính auto_increment). Điều này yêu cầu binlog_format=ROW hoặc MIXED (và ROW là mặc định trong MySQL 5.7).
 
 _innodb_io_capacity _and_ innodb_io_capacity_max_
 
-This is a more advanced tuning, and only make sense when you are performing a lot of writes all the time (it does not apply to reads, i.e. SELECTs). If you really need to tune it, the best method is knowing how many IOPS the system can do. For example, if the server has one SSD drive, we can set innodb_io_capacity_max=6000 and innodb_io_capacity=3000 (50% of the max). It is a good idea to run the sysbench or any other benchmark tool to benchmark the disk throughput.
+Đây là một điều chỉnh nâng cao hơn và chỉ có ý nghĩa khi bạn đang thực hiện rất nhiều công việc ghi trong mọi thời điểm (Nó không áp dụng cho việc đọc, i.e SELECTs). Nếu bạn thực sự cần điều chỉnh nó, các tốt nhất là hiểu về số lượng IOPS mà hệ thống có thể thực hiện. Ví dụ, nếu server có một ổ SSD, chúng ta có thể thiết lập innodb_io_capacity_max=6000 và innodb_io_capacity=3000 (50% trong số lớn nhất). Đây là một ý tưởng tốt để chạy Đó là một ý tưởng tốt để chạy sysbench hoặc bất kỳ công cụ benchmark khác nào để chuẩn hóa thông lượng đĩa.
 
-But do we need to worry about this setting? Look at the graph of buffer pool's "[dirty pages][9]":
+Nhưng liệu rằng chúng ta có cần lo lắng quá nhiều về việc cài đặt? Nhìn vào đồ thị vùng đệm của "[dirty pages][9]":
 
 ![screen-shot-2016-10-03-at-7-19-47-pm][10]
 
-In this case, the total amount of dirty pages is high, and it looks like InnoDB can't keep up with flushing them. If we have a fast disk subsystem (i.e., SSD), we might benefit from increasing innodb_io_capacity and innodb_io_capacity_max.
+Trong trường hợp này, tổng số lượng các trang "dirty" là rất cao, và trông có vẻ là InnoDB không thể theo kịp với việc xả chúng. Nếu chúng ta có hệ thống ổ đĩa con nhanh (i.e., SSD), chúng ta có thể hưởng lợi từ việc tăng innodb_io_capacity và innodb_io_capacity_max.
 
-_**Conclusion or TL;DR version**_
+_**Kết luận hoặc TL;DR phiên bản**_
 
-The new MySQL 5.7 defaults are much better for general purpose workloads. At the same time, we still need to configure InnoDB variables to take advantages of the amount of RAM on the box. After installation, follow these steps:
+Măc định của MySQL 5.7 mới tốt hơn đối với khối lượng mục đích công việc chung. Trong cùng một thời điểm, chúng tôi vẫn cần cấu hình các biến của InnoDB để tận dụng số lượng RAM trong đó. Sau khi cài đặt, hãy làm theo các bước sau:
 
-1. Add InnoDB variables to my.cnf (as described above) and restart MySQL
-2. Install a monitoring system, (e.g., Percona Monitoring and Management platform)
-3. Look at the graphs and determine if MySQL needs to be tuned further
-
+1. Thêm các biến InnoDB vào my.cnf (như mô tả ở trên) và khởi động lại MySQL
+2. Cài đặt hệ thống giám sát, (ví dụ: nền tảng giám sát và quản lý Percona)
+3. Nhìn vào biểu đồ và xác định xem liệu MySQL có cần được điều chỉnh thêm hay không.
 
 
 
