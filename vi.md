@@ -6,7 +6,7 @@ Một vài năm trước, Stephane Combaudon đã viết một bài blog đăng 
 
 Tin tốt là MySQL 5.7 có những giá trị mặc định cho việc hiệu chỉnh tốt hơn. Morgan Tocker đã tạo ra một [trang với tập hợp các tính năng hoàn thiện trong MySQL 5.7][2], và là một điểm tham khảo tuyệt vời. Ví dụ, những biến dưới đây được cài đặt _mặc định_:
 
-Trong MySQL 5.7, có 4 biến thực sự quan trọng mà cần phải được thay đổi. Tuy nhiên, cũng có những biến khác của InnoDB và của MySQL toàn cục mà cần được điều chỉnh theo khối lượng công việc và ổ cứng.
+Trong MySQL 5.7, có 4 biến thực sự quan trọng mà cần phải được thay đổi. Tuy nhiên, cũng có những biến khác của InnoDB và của MySQL toàn cục mà cần được điều chỉnh theo khối lượng công việc và phần cứng cụ thể.
 
 Để bắt đầu, thêm các cài đặt sau vào my.cnf dưới phần [mysqld]. Bạn sẽ cần khởi động lại MySQL:
 
@@ -57,7 +57,7 @@ _InnoDB log file size._ Hãy xem các đồ thị sau:
 
 ![MySQL 5.7 Performance Tuning][6]
 
-Như chúng ta có thể thấy ở đây, InnoDB thương viết khoảng 2.26GB dữ liệu mỗi giờ, vượt quá tổng kích thước được ghi vào file(2G). Chúng ta có thể tăng biến innodb_log_file_size lên và khởi động lại MySQL. Ngoài ra, hãy sử dụng "hiển thị trạng thái InnoDB" để [tính toán một file log tốt][7]
+Như chúng ta có thể thấy ở đây, InnoDB thương viết khoảng 2.26GB dữ liệu mỗi giờ, vượt quá tổng kích thước được ghi vào file(2G). Chúng ta có thể tăng biến innodb_log_file_size lên và khởi động lại MySQL. Ngoài ra, hãy sử dụng "show engine InnoDB status" để [tính toán một file log tốt][7]
 
 _**Các biến khác**_
 
@@ -69,7 +69,7 @@ Thiết lập [innodb_autoinc_lock_mode][8] =2 (chế độ xen kẽ) có thể 
 
 _innodb_io_capacity _and_ innodb_io_capacity_max_
 
-Đây là một điều chỉnh nâng cao hơn và chỉ có ý nghĩa khi bạn đang thực hiện rất nhiều công việc ghi trong mọi thời điểm (Nó không áp dụng cho việc đọc, i.e SELECTs). Nếu bạn thực sự cần điều chỉnh nó, các tốt nhất là hiểu về số lượng IOPS mà hệ thống có thể thực hiện. Ví dụ, nếu server có một ổ SSD, chúng ta có thể thiết lập innodb_io_capacity_max=6000 và innodb_io_capacity=3000 (50% trong số lớn nhất). Đây là một ý tưởng tốt để chạy Đó là một ý tưởng tốt để chạy sysbench hoặc bất kỳ công cụ benchmark khác nào để chuẩn hóa thông lượng đĩa.
+Đây là một điều chỉnh nâng cao hơn và chỉ có ý nghĩa khi bạn đang thực hiện rất nhiều công việc ghi trong mọi thời điểm (Nó không áp dụng cho việc đọc, ví dụ như các câu SELECT). Nếu bạn thực sự cần điều chỉnh nó, các tốt nhất là hiểu về số lượng IOPS mà hệ thống có thể thực hiện. Ví dụ, nếu server có một ổ SSD, chúng ta có thể thiết lập innodb_io_capacity_max=6000 và innodb_io_capacity=3000 (50% trong số lớn nhất). Đây là một ý tưởng tốt để chạy Đó là một ý tưởng tốt để chạy sysbench hoặc bất kỳ công cụ benchmark khác nào để chuẩn hóa thông lượng đĩa.
 
 Nhưng liệu rằng chúng ta có cần lo lắng quá nhiều về việc cài đặt? Nhìn vào đồ thị vùng đệm của "[dirty pages][9]":
 
